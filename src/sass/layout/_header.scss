@@ -1,0 +1,93 @@
+$linear-gradient: (
+  linear-gradient(to bottom, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.56))
+);
+
+.header {
+  height: 230px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  color: map-get($colorPool, 'white');
+
+  background-image: url(/src/images/header-home/mobile/header-home1x.jpg);
+  @include mediaScreenRatio2x() {
+    background-image: url(/src/images/header-home/mobile/header-home2x.jpg);
+  }
+
+  @include mq(tablet) {
+    height: 216px;
+    background-image: url(/src/images/header-home/tablet/header-home1x.jpg);
+    @include mediaScreenRatio2x() {
+      background-image: url(/src/images/header-home/tablet/header-home2x.jpg);
+    }
+  }
+
+  @include mq(desktop) {
+    background-image: url(/src/images/header-home/desktop/header-home1x.jpg);
+    @include mediaScreenRatio2x() {
+      background-image: url(/src/images/header-home/desktop/header-home2x.jpg);
+    }
+  }
+}
+
+.header-library {
+  background-image: $linear-gradient,
+    url(/src/images/header-my-library/mobile/header-library1x.jpg);
+  @include mediaScreenRatio2x() {
+    background-image: $linear-gradient,
+      url(/src/images/header-my-library/mobile/header-library2x.jpg);
+  }
+
+  @include mq(tablet) {
+    height: 216px;
+    background-image: $linear-gradient,
+      url(/src/images/header-my-library/tablet/header-library1x.jpg);
+    @include mediaScreenRatio2x() {
+      background-image: $linear-gradient,
+        url(/src/images/header-my-library/tablet/header-library2x.jpg);
+    }
+  }
+
+  @include mq(desktop) {
+    background-image: $linear-gradient,
+      url(/src/images/header-my-library/desktop/header-library1x.jpg);
+    @include mediaScreenRatio2x() {
+      background-image: $linear-gradient,
+        url(/src/images/header-my-library/desktop/header-library2x.jpg);
+    }
+  }
+}
+
+.header__top-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.header__button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  @include mq(mobile) {
+    margin-top: 20px;
+  }
+
+  @include mq(tablet) {
+    gap: 32px;
+  }
+
+  @include mq(desktop) {
+    gap: 16px;
+  }
+}
+
+.header__navigation {
+  display: flex;
+  gap: 40px;
+  @include fonts(12px, 14px);
+}

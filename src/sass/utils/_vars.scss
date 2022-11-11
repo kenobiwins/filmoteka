@@ -1,27 +1,19 @@
 $colorPool: (
-  'primary': (
-    'black': #000,
-    'white': #fff,
-    'grey': #8c8c8c,
-  ),
-  'secondary': (
-    'orange': #ff6b08,
-    'white': #fff,
-  ),
-  'pagination': (
-    'gray': #f7f7f7,
-    'accent': #ff6b08,
-  ),
-  'footer': (
-    'text': #545454,
-    'bg': #f7f7f7,
-  ),
-  'accent': (
-    'primary': #ff6b01,
-  ),
+  'black': #000,
+  'white': #fff,
+  'grey': #8c8c8c,
+
+  'gray-light': #f7f7f7,
+  'accent': #ff6b08,
+  'accent-link': #ff001b,
+  'text': #545454,
+
+  'orange': #ff6b01,
 );
 
-:root,
+:root {
+  --transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 :root.light {
   --bg-color: #fff;
   --text-color: #123;

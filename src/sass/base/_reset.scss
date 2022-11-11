@@ -7,10 +7,17 @@ h6,
 p,
 ul,
 ol,
-button {
+button,
+a {
   list-style: none;
+  text-decoration: none;
+  user-select: none;
   margin: 0;
   padding: 0;
+}
+button,
+a {
+  cursor: pointer;
 }
 
 img {
