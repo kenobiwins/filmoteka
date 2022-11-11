@@ -1,0 +1,33 @@
+$colorPool: (
+  'primary': (
+    'black': #000,
+    'white': #fff,
+    'grey': #8c8c8c,
+  ),
+  'secondary': (
+    'orange': #ff6b08,
+    'white': #fff,
+  ),
+  'pagination': (
+    'gray': #f7f7f7,
+    'accent': #ff6b08,
+  ),
+  'footer': (
+    'text': #545454,
+    'bg': #f7f7f7,
+  ),
+  'accent': (
+    'primary': #ff6b01,
+  ),
+);
+
+:root,
+:root.light {
+  --bg-color: #fff;
+  --text-color: #123;
+}
+
+:root.dark {
+  --bg-color: #272e34;
+  --text-color: #fff;
+}
