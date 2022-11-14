@@ -5,7 +5,7 @@ const API_KEY = 'f516fdc3d4918369a6ad5ae834597c19';
 
 async function fetchTrendingMovies(currentPage = 1) {
   const promise = await axios.get(
-    `${BASE_URL}/trending/all/day?api_key=${API_KEY}&page=${currentPage}`
+    `${BASE_URL}/trending/movie/day?api_key=${API_KEY}&page=${currentPage}`
   );
   if (!promise.status) {
     throw new Error('Something went wrong');
@@ -34,4 +34,15 @@ async function fetchMovies(searchQuery) {
 
   return promise;
 }
-export { fetchTrendingMovies, fetchGenres, fetchMovies };
+
+async function fetchInfoMovieById(id) {
+  const promise = await axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
+  console.log(promise);
+  if (!promise.status) {
+    throw new Error('Something went wrongs');
+  }
+
+  return promise;
+}
+
+export { fetchTrendingMovies, fetchGenres, fetchMovies, fetchInfoMovieById };

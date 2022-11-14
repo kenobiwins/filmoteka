@@ -1,0 +1,63 @@
+.backdrop {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0px;
+  z-index: 120;
+
+  visibility: visible;
+  opacity: 1;
+
+  background-color: #00000033;
+
+  transition: opacity var(--transition), visibility var(--transition);
+
+  &.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+.modal {
+  padding: 40px 20px;
+
+  background-color: map-get($colorPool, 'white');
+  box-shadow: 0px 2px 1px 0px #00000033, 0px 1px 1px 0px #00000024,
+    0px 1px 3px 0px #0000001f;
+
+  border: none;
+  border-radius: 4px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: auto;
+
+  @include mq(mobile) {
+    min-width: 280px;
+    height: 95vh;
+  }
+  @include mq(tablet) {
+    width: 450px;
+    height: 95vh;
+  }
+  @include mq(desktop) {
+    width: 528px;
+    // height: auto;
+  }
+}
+.modal__img-wrapper {
+}
+.modal__info-wrapper {
+}
+.modal__ratio-info-list {
+}
+.modal__ratio-info {
+}
+.modal__ratio-name {
+}
+.modal__full-info {
+}
+.modal__button {
+}
