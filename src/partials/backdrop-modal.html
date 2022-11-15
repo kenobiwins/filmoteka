@@ -1,7 +1,7 @@
 <div class="backdrop is-hidden">
   <div class="modal">
     <button class="button-close" type="button" data-modal-close>
-      <svg class="button-close__icon" width="11px" height="11px">
+      <svg class="icon" width="14px" height="14px">
         <use href="/src/images/svg/symbol-defs.svg#icon-close"></use>
       </svg>
     </button>
@@ -13,7 +13,9 @@
       <ul class="modal__ratio-info-list">
         <li class="modal__ratio-info">
           <span class="modal__ratio-name">Vote / Votes</span>
-          <p class="modal__ratio-value" data-value="ratio"></p>
+          <p class="modal__ratio-value" data-value="ratio">
+            <span class="modal__current-ratio"></span> / <span></span>
+          </p>
         </li>
         <li class="modal__ratio-info">
           <span class="modal__ratio-name">Popularity</span>
@@ -28,13 +30,18 @@
           <p class="modal__ratio-value" data-value="genre"></p>
         </li>
       </ul>
-      <p class="modal__full-info"></p>
-      <button class="modal__button" type="button" data-value="watched">
-        Add to watched
-      </button>
-      <button class="modal__button" type="button" data-value="queue">
-        Add to queue
-      </button>
+      <div>
+        <h4 class="modal__subtitle">ABOUT</h4>
+        <p class="modal__full-info"></p>
+      </div>
+      <div class="form__buttons-wrapper">
+        <button class="button modal__button" type="button" data-value="watched">
+          Add to watched
+        </button>
+        <button class="button modal__button" type="button" data-value="queue">
+          Add to queue
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -6,7 +6,7 @@ const refs = {
   formAlert: document.querySelector('.form__alert'),
   modalInfo: document.querySelector('.modal'),
   backdrop: document.querySelector('.backdrop'),
-  buttonCloseModal: document.querySelector('.button-close'),
+  buttonCloseModal: document.querySelector('[data-modal-close]'),
 };
 
 export { refs };

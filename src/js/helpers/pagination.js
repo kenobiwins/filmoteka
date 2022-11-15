@@ -1,6 +1,8 @@
 import { refs } from '../refs/refs';
-import { fetchTrendingMovies } from '../API/API';
+import { fetchMovies, fetchTrendingMovies } from '../API/API';
 import { renderCards, insertMarkup } from '../render/renderCards';
+
+const mqMoreThanMobile = window.matchMedia('(min-width: 768px)').matches;
 
 function pagination(page, pages) {
   let markup = '';
@@ -12,31 +14,51 @@ function pagination(page, pages) {
   // &#129144;<
   // &#129146;>
   if (page > 1) {
-    markup += `<li data-action='prev'>&#129144;</li>`;
-    markup += `<li>1</li>`;
+    if (mqMoreThanMobile) {
+      markup += `<li class='pagination__item' data-action='prev'>&#129144;</li>`;
+      markup += `<li class='pagination__item'>1</li>`;
+    } else {
+      markup += `<li class='pagination__item' data-action='prev'>&#129144;</li>`;
+    }
   }
   if (page > 4) {
-    markup += `<li>...</li>`;
+    if (mqMoreThanMobile) {
+      markup += `<li class='pagination__item'>...</li>`;
+    }
   }
-  if (page > 3) {
-    markup += `<li>${beforeTwoPage}</li>`;
+  if (!mqMoreThanMobile && page >= 3) {
+    markup += `<li class='pagination__item'>${beforeTwoPage}</li>`;
+  } else if (page > 3) {
+    markup += `<li class='pagination__item'>${beforeTwoPage}</li>`;
   }
-  if (page > 2) {
-    markup += `<li>${beforeOnePage}</li>`;
+  if (!mqMoreThanMobile && page >= 2) {
+    markup += `<li class='pagination__item'>${beforeOnePage}</li>`;
+  } else if (page > 2) {
+    markup += `<li class='pagination__item'>${beforeOnePage}</li>`;
   }
-  markup += `<li class='currentPage'>${PAGE}</li>`;
-  if (pages - 1 > PAGE) {
-    markup += `<li>${afterOnePage}</li>`;
+  markup += `<li class='pagination__item pagination__current-page'>${PAGE}</li>`;
+  if (!mqMoreThanMobile && pages - 1 >= PAGE) {
+    markup += `<li class='pagination__item'>${afterOnePage}</li>`;
+  } else if (pages - 1 > PAGE) {
+    markup += `<li class='pagination__item'>${afterOnePage}</li>`;
   }
-  if (pages - 2 > PAGE) {
-    markup += `<li>${afterTwoPage}</li>`;
+  if (!mqMoreThanMobile && pages - 2 >= PAGE) {
+    markup += `<li class='pagination__item'>${afterTwoPage}</li>`;
+  } else if (pages - 2 > PAGE) {
+    markup += `<li class='pagination__item'>${afterTwoPage}</li>`;
   }
   if (pages - 3 > PAGE) {
-    markup += `<li>...</li>`;
+    if (mqMoreThanMobile) {
+      markup += `<li class='pagination__item'>...</li>`;
+    }
   }
   if (pages > PAGE) {
-    markup += `<li>${pages}</li>`;
-    markup += `<li data-action='next'>&#129146;</li>`;
+    if (mqMoreThanMobile) {
+      markup += `<li class='pagination__item'>${pages}</li>`;
+      markup += `<li class='pagination__item' data-action='next'>&#129146;</li>`;
+    } else {
+      markup += `<li class='pagination__item' data-action='next'>&#129146;</li>`;
+    }
   }
   refs.pagination.innerHTML = markup;
 }
@@ -66,4 +88,29 @@ async function paginationSelect(e) {
   pagination(response.data.page, response.data.total_pages);
 }
 
-export { pagination, paginationSelect };
+async function paginationOnSearch(e) {
+  const { target, currentTarget } = e;
+  if (target === currentTarget || target === '...') {
+    return;
+  }
+  if (target.dataset.action === 'next') {
+    PAGE += 1;
+    const response = await fetchMovies(refs.form.searchQuery.value, PAGE);
+    insertMarkup(refs.mainContainer, await renderCards(response.data));
+    pagination(response.data.page, response.data.total_pages);
+    return;
+  }
+  if (target.dataset.action === 'prev') {
+    PAGE -= 1;
+    const response = await fetchMovies(refs.form.searchQuery.value, PAGE);
+    insertMarkup(refs.mainContainer, await renderCards(response.data));
+    pagination(response.data.page, response.data.total_pages);
+    return;
+  }
+  PAGE = Number(target.textContent);
+  const response = await fetchMovies(refs.form.searchQuery.value, PAGE);
+  insertMarkup(refs.mainContainer, await renderCards(response.data));
+  pagination(response.data.page, response.data.total_pages);
+}
+
+export { pagination, paginationSelect, paginationOnSearch };

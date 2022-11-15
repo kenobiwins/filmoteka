@@ -24,9 +24,9 @@ async function fetchGenres() {
   return promise;
 }
 
-async function fetchMovies(searchQuery) {
+async function fetchMovies(searchQuery, currentPage = 1) {
   const promise = await axios.get(
-    `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${searchQuery}`
+    `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${searchQuery}&page=${currentPage}`
   );
   if (!promise.status) {
     throw new Error('Something went wrong');
@@ -37,7 +37,7 @@ async function fetchMovies(searchQuery) {
 
 async function fetchInfoMovieById(id) {
   const promise = await axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
-  console.log(promise);
+
   if (!promise.status) {
     throw new Error('Something went wrongs');
   }

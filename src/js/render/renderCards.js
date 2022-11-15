@@ -42,7 +42,7 @@ async function renderCards(data) {
         }
         acc += `<li class="movie-card"  data-id='${id}'>
   <img src='${imageUrl}' loading='lazy'/>
-  <h3 class="movie-card__name">${title || name}</h3>
+  <h3 class="movie-card__name">${title.toUpperCase() || name.toUpperCase()}</h3>
   <p class="movie-card__genres">
     ${
       genres.length === 0 ? "haven't genre" : genres.join(', ')

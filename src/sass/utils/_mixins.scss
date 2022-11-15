@@ -15,7 +15,7 @@
 @mixin mq($type) {
   $mobile: 767px;
   $tablet: 768px;
-  $desktop: 1280px;
+  $desktop: 1024px;
 
   @if $type == mobile {
     @media screen and (max-width: $mobile) {
