@@ -7,6 +7,7 @@ const mqMoreThanMobile = window.matchMedia('(min-width: 768px)').matches;
 
 function pagination(page, pages) {
   let markup = '';
+
   PAGE = page;
   const beforeTwoPage = page - 2;
   const beforeOnePage = page - 1;

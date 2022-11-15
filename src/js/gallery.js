@@ -57,3 +57,5 @@ async function onSearch(e) {
   pagination(response.data.page, response.data.total_pages);
   insertMarkup(refs.mainContainer, await renderCards(response.data));
 }
+
+export { PAGE };
