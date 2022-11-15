@@ -1,7 +1,7 @@
 import { refs } from '../refs/refs';
 import { fetchMovies, fetchTrendingMovies } from '../API/API';
 import { renderCards, insertMarkup } from '../render/renderCards';
-
+import { PAGE } from '../gallery';
 const mqMoreThanMobile = window.matchMedia('(min-width: 768px)').matches;
 
 function pagination(page, pages) {
