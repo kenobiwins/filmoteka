@@ -1,6 +1,12 @@
 import { refs } from '../refs/refs';
 import { fetchInfoMovieById, fetchGenres } from '../API/API';
 import { IMAGES_URL, ALT_IMAGE_URL } from './renderCards';
+import { colRefQueue, colRefWatched } from '../firebase/firebase';
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
+
+// import { app } from '../firebase/firebase';
+// import { getDatabase, ref, set } from 'firebase/database';
+// import { getStorage, ref, uploadString } from 'firebase/storage';
 
 const el = {
   img: refs.modalInfo.querySelector('.modal__img-wrapper img'),
@@ -42,8 +48,6 @@ async function showInfo(e) {
     vote_average,
     vote_count,
     popularity,
-    original_title,
-    original_name,
     overview,
     genres,
     poster_path,
@@ -66,6 +70,30 @@ async function showInfo(e) {
 
   refs.backdrop.classList.remove('is-hidden');
   document.body.classList.add('no-scroll');
+
+  refs.addWatchedBtn.addEventListener(
+    'click',
+    () => {
+      addDoc(colRefWatched, response.data);
+    }
+    // writeMovieData(cardId, response.data, 'watched')
+    // () => {
+    //   set(ref(getDatabase(app), `watched/` + cardId), response.data);
+    //   console.log('Saved to watched !');
+    // }
+  );
+
+  refs.addQueueBtn.addEventListener(
+    'click',
+    () => {
+      addDoc(colRefQueue, response.data);
+    }
+    // writeMovieData(cardId, response.data, 'queue')
+    // () => {
+    //   set(ref(getDatabase(app), `queue/` + cardId), response.data);
+    //   console.log('Saved to queue !');
+    // }
+  );
 
   window.addEventListener('keydown', closeModalOnBackdropClick);
 }

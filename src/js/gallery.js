@@ -1,11 +1,6 @@
 import { fetchTrendingMovies, fetchMovies } from './API/API';
 import { refs } from './refs/refs';
 import { renderCards, insertMarkup } from './render/renderCards';
-// import {
-//   pagination,
-//   paginationOnSearch,
-//   paginationSelect,
-// } from './helpers/pagination';
 import { showInfo } from './render/renderModal';
 
 let PAGE = 1;

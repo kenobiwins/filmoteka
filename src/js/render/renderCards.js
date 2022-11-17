@@ -2,8 +2,8 @@ import { fetchGenres } from '../API/API';
 
 const ALT_IMAGE_URL =
   'https://www.csaff.org/wp-content/uploads/csaff-no-poster.jpg';
-const IMAGES_URL = 'https://image.tmdb.org/t/p/w500/';
-let imageUrl = '';
+const IMAGES_URL = 'https://image.tmdb.org/t/p/w500';
+// let imageUrl = '';
 
 async function renderCards(data) {
   try {
@@ -36,12 +36,12 @@ async function renderCards(data) {
           typeof poster_path === 'undefined' ||
           typeof poster_path === 'object'
         ) {
-          imageUrl = ALT_IMAGE_URL;
+          poster_path = ALT_IMAGE_URL;
         } else {
-          imageUrl = IMAGES_URL + poster_path;
+          poster_path = IMAGES_URL + poster_path;
         }
         acc += `<li class="movie-card"  data-id='${id}'>
-  <img src='${imageUrl}' loading='lazy'/>
+  <img src='${poster_path}' loading='lazy'/>
   <h3 class="movie-card__name">${title.toUpperCase() || name.toUpperCase()}</h3>
   <p class="movie-card__genres">
     ${
