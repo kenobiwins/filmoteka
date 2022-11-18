@@ -1,12 +1,18 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  // addDoc,
+} from 'firebase/firestore';
 import { refs } from '../refs/refs';
-import { ALT_IMAGE_URL } from '../render/renderCards';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { closeModalOnBtn, showInfoFromFirebase } from '../render/renderModal';
+import { ALT_IMAGE_URL, insertMarkup } from '../render/renderCards';
+import Notiflix from 'notiflix';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: 'AIzaSyCebWfsV7NOjyL02i7fSXE4AU5yFpXdziw',
   authDomain: 'filmoteka-6b0fa.firebaseapp.com',
@@ -19,53 +25,70 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 // init services
-
 const db = getFirestore(app);
 
 // collection ref
 const colRefWatched = collection(db, 'watched/');
 const colRefQueue = collection(db, 'queue/');
-// get collection data watched
 
 if (document.title === 'Filmoteka Library') {
-  refs.getWatchedDataBtn.addEventListener('click', () => {
+  // get collection data watched
+  refs.getWatchedDataBtn.addEventListener('click', e => {
     getDocs(colRefWatched)
       .then(async snapshot => {
-        let collection = [];
-
-        snapshot.docs.forEach(doc => {
-          collection.push({ ...doc.data(), baseId: doc.id });
-        });
-        return collection;
+        Notiflix.Loading.standard();
+        return getData(snapshot);
       })
       .then(async data => {
+        Notiflix.Loading.remove(500);
         console.log('watched', data);
         if (data.length === 0) {
-          console.log('empty 3:');
+          showEmptyData('watched');
         }
-        refs.libraryContainer.innerHTML = await renderByFirebase(data);
+        refs.getQueueDataBtn.classList.contains('button--active')
+          ? refs.getQueueDataBtn.classList.remove('button--active')
+          : null;
+        refs.getWatchedDataBtn.classList.add('button--active');
+        insertMarkup(refs.libraryContainer, await renderByFirebase(data));
+
+        refs.addWatchedBtn.classList.remove('visually-hidden');
+        refs.addWatchedBtn.textContent = 'Delete from watched';
+        refs.addQueueBtn.classList.add('visually-hidden');
+        refs.libraryContainer.addEventListener('click', showInfoFromFirebase);
+        refs.addWatchedBtn.addEventListener('click', deleteWatched);
       })
       .catch(error => {
         console.log(error);
       });
   });
-  // get collection data queue
-  refs.getQueueDataBtn.addEventListener('click', () => {
-    getDocs(colRefQueue)
-      .then(snapshot => {
-        let collection = [];
 
-        snapshot.docs.forEach(doc => {
-          collection.push({ ...doc.data(), baseId: doc.id });
-        });
-        return collection;
+  // get collection data queue
+  refs.getQueueDataBtn.addEventListener('click', e => {
+    getDocs(colRefQueue)
+      .then(async snapshot => {
+        Notiflix.Loading.standard();
+        return getData(snapshot);
       })
       .then(async data => {
         console.log('queue', data);
+        Notiflix.Loading.remove(500);
         if (data.length === 0) {
-          console.log('empty 3:');
+          showEmptyData('queue');
         }
-        refs.libraryContainer.innerHTML = await renderByFirebase(data);
+
+        refs.getWatchedDataBtn.classList.contains('button--active')
+          ? refs.getWatchedDataBtn.classList.remove('button--active')
+          : null;
+        refs.getQueueDataBtn.classList.add('button--active');
+
+        insertMarkup(refs.libraryContainer, await renderByFirebase(data));
+
+        refs.addQueueBtn.classList.remove('visually-hidden');
+        refs.addQueueBtn.textContent = 'Delete from queue';
+        refs.addWatchedBtn.classList.add('visually-hidden');
+        refs.libraryContainer.addEventListener('click', showInfoFromFirebase);
+
+        refs.addQueueBtn.addEventListener('click', deleteQueue);
       })
       .catch(error => {
         console.log(error);
@@ -84,6 +107,7 @@ function renderByFirebase(data) {
         vote_average,
         name,
         id,
+        baseId,
       },
       i
     ) => {
@@ -99,7 +123,7 @@ function renderByFirebase(data) {
       } else {
         poster_path = 'https://image.tmdb.org/t/p/w500/' + poster_path;
       }
-      acc += `<li class="movie-card"  data-id='${id}'>
+      acc += `<li class="movie-card"  data-id='${id}' firebase-id="${baseId}">
   <img src='${poster_path}' loading='lazy'/>
   <h3 class="movie-card__name">${title.toUpperCase() || name.toUpperCase()}</h3>
   <p class="movie-card__genres">
@@ -117,4 +141,46 @@ function renderByFirebase(data) {
   );
 }
 
-export { colRefQueue, colRefWatched };
+function getData(snapshot) {
+  let collection = [];
+
+  snapshot.docs.forEach(doc => {
+    collection.push({ ...doc.data(), baseId: doc.id });
+  });
+  return collection;
+}
+
+function deleteData(path_to_folder, e) {
+  // const { target } = e;
+  const filmId = e.target.closest('div').getAttribute('firebase-id');
+
+  const docRef = doc(db, `${path_to_folder}`, filmId);
+  deleteDoc(docRef);
+}
+function handleDeleteData(e, path_to_folder, coolectionRef) {
+  deleteData(`${path_to_folder}`, e);
+  // const { target } = e;
+  // const filmId = target.closest('div').getAttribute('firebase-id');
+
+  // const docRef = doc(db, 'watched', filmId);
+  // deleteDoc(docRef);
+  getDocs(coolectionRef)
+    .then(snapshot => {
+      return getData(snapshot);
+    })
+    .then(async data => {
+      insertMarkup(refs.libraryContainer, await renderByFirebase(data));
+      closeModalOnBtn();
+    });
+}
+function deleteQueue(e) {
+  return handleDeleteData(e, 'queue', colRefQueue);
+}
+function deleteWatched(e) {
+  handleDeleteData(e, 'watched', colRefWatched);
+}
+function showEmptyData(name) {
+  Notiflix.Notify.info(`Your ${name} tab is empty 😔`);
+}
+
+export { colRefQueue, colRefWatched, addToWatched, addToQueue, handleWatched };

@@ -1,12 +1,16 @@
 import { refs } from '../refs/refs';
-import { fetchInfoMovieById, fetchGenres } from '../API/API';
+import { fetchInfoMovieById, fetchGenres, fetchTrailerById } from '../API/API';
 import { IMAGES_URL, ALT_IMAGE_URL } from './renderCards';
-import { colRefQueue, colRefWatched } from '../firebase/firebase';
+import {
+  addToQueue,
+  addToWatched,
+  colRefQueue,
+  colRefWatched,
+  handleWatched,
+} from '../firebase/firebase';
 import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
-
-// import { app } from '../firebase/firebase';
-// import { getDatabase, ref, set } from 'firebase/database';
-// import { getStorage, ref, uploadString } from 'firebase/storage';
+import { async } from '@firebase/util';
+import Notiflix from 'notiflix';
 
 const el = {
   img: refs.modalInfo.querySelector('.modal__img-wrapper img'),
@@ -26,6 +30,8 @@ const el = {
   infoFilm: document.querySelector('.modal__full-info'),
 };
 
+let dataVar = {};
+let idForTrailer = '';
 async function showInfo(e) {
   e.preventDefault();
 
@@ -34,6 +40,156 @@ async function showInfo(e) {
   if (target === currentTarget) return;
 
   const cardId = target.closest('li').getAttribute('data-id');
+
+  if (!cardId) return;
+
+  const response = await fetchInfoMovieById(cardId);
+
+  if (response === undefined || response === null) {
+    return;
+  }
+
+  idForTrailer = cardId;
+  dataVar = response.data;
+
+  [...refs.buttonsWrapper.children].forEach(el => {
+    if (el.hasAttribute('disabled')) {
+      el.removeAttribute('disabled');
+    }
+  });
+
+  const {
+    title,
+    name,
+    vote_average,
+    vote_count,
+    popularity,
+    overview,
+    genres,
+    poster_path,
+    id,
+  } = response.data;
+
+  getDocs(colRefWatched).then(snapshot => {
+    snapshot.docs.forEach(doc => {
+      [doc.data()].some(el => {
+        return el['id'] === Number(cardId);
+      })
+        ? refs.addWatchedBtn.setAttribute('disabled', '')
+        : null;
+    });
+  });
+
+  getDocs(colRefQueue).then(snapshot => {
+    snapshot.docs.forEach(doc => {
+      [doc.data()].some(el => {
+        return el['id'] === Number(cardId);
+      })
+        ? refs.addQueueBtn.setAttribute('disabled', '')
+        : null;
+    });
+  });
+
+  el.img.src = IMAGES_URL + poster_path || ALT_IMAGE_URL;
+  el.originalTitle.textContent = title.toUpperCase() || name.toUpperCase();
+  el.ratio.firstElementChild.textContent = vote_average
+    ? vote_average.toFixed(1)
+    : "haven't ratio";
+  el.ratio.lastElementChild.textContent = vote_count || '';
+
+  el.popularity.textContent = popularity ? popularity.toFixed(1) : '';
+  el.refTitle.textContent = title.toUpperCase() || name.toUpperCase();
+  el.genres.textContent = genres.map(el => el['name']).join(', ');
+  el.infoFilm.textContent = overview || "haven't overview";
+
+  refs.buttonCloseModal.addEventListener('click', closeModalOnBtn);
+  refs.backdrop.addEventListener('click', closeModalOnBackdropClick);
+  refs.posterWrapper.addEventListener('click', showTrailer);
+
+  refs.backdrop.classList.remove('is-hidden');
+  document.body.classList.add('no-scroll');
+
+  refs.buttonsWrapper.addEventListener('click', handleSaveData);
+
+  window.addEventListener('keydown', closeModalOnBackdropClick);
+}
+async function showTrailer(e) {
+  e.preventDefault();
+  const { target, currentTarget } = e;
+  console.log(target, currentTarget);
+  console.log(idForTrailer);
+  const response = await fetchTrailerById(idForTrailer);
+
+  response.data.results.forEach(el => {
+    el.hasOwnProperty(name);
+    console.log(el.hasOwnProperty(name));
+    console.log(el.name);
+  });
+}
+
+function handleSaveData(e) {
+  const { target, currentTarget } = e;
+
+  if (target === currentTarget) {
+    return;
+  }
+  if (
+    target === refs.addQueueBtn &&
+    refs.addQueueBtn.textContent.trim() === 'Add to queue'
+  ) {
+    saveData(colRefQueue, dataVar);
+    return;
+  } else if (
+    target === refs.addWatchedBtn &&
+    refs.addWatchedBtn.textContent.trim() === 'Add to watched'
+  ) {
+    saveData(colRefWatched, dataVar);
+    return;
+  }
+}
+
+function saveData(collectionRef, data) {
+  Notiflix.Notify.success(`Movie has saved to ${collectionRef._path}`);
+  addDoc(collectionRef, data);
+}
+
+function closeModalOnBtn(e) {
+  refs.buttonCloseModal.removeEventListener('click', closeModalOnBtn);
+  refs.backdrop.removeEventListener('click', closeModalOnBtn);
+  removeStyles();
+
+  refs.buttonsWrapper.removeEventListener('click', handleSaveData);
+  window.removeEventListener('keydown', closeModalOnBackdropClick);
+}
+
+function closeModalOnBackdropClick(e) {
+  const { target, currentTarget, code } = e;
+  if (target === currentTarget) {
+    removeStyles();
+  }
+  if (code === 'Escape') {
+    removeStyles();
+  }
+
+  window.removeEventListener('keydown', closeModalOnBackdropClick);
+}
+
+function removeStyles() {
+  refs.backdrop.classList.add('is-hidden');
+  document.body.classList.remove('no-scroll');
+  el.img.src = '#';
+  el.img.style.width = null;
+}
+
+async function showInfoFromFirebase(e) {
+  e.preventDefault();
+
+  const { target, currentTarget } = e;
+
+  if (target === currentTarget) return;
+
+  const cardId = target.closest('li').getAttribute('data-id');
+  const firebaseId = target.closest('li').getAttribute('firebase-id');
 
   if (!cardId) return;
 
@@ -53,7 +209,13 @@ async function showInfo(e) {
     poster_path,
   } = response.data;
 
-  el.img.src = IMAGES_URL + poster_path || ALT_IMAGE_URL;
+  if (poster_path === null || poster_path === undefined) {
+    el.img.src = ALT_IMAGE_URL;
+    el.img.style.width = '300px';
+  } else {
+    el.img.src = IMAGES_URL + poster_path;
+  }
+
   el.originalTitle.textContent = title.toUpperCase() || name.toUpperCase();
   el.ratio.firstElementChild.textContent = vote_average
     ? vote_average.toFixed(1)
@@ -70,56 +232,15 @@ async function showInfo(e) {
 
   refs.backdrop.classList.remove('is-hidden');
   document.body.classList.add('no-scroll');
-
-  refs.addWatchedBtn.addEventListener(
-    'click',
-    () => {
-      addDoc(colRefWatched, response.data);
-    }
-    // writeMovieData(cardId, response.data, 'watched')
-    // () => {
-    //   set(ref(getDatabase(app), `watched/` + cardId), response.data);
-    //   console.log('Saved to watched !');
-    // }
-  );
-
-  refs.addQueueBtn.addEventListener(
-    'click',
-    () => {
-      addDoc(colRefQueue, response.data);
-    }
-    // writeMovieData(cardId, response.data, 'queue')
-    // () => {
-    //   set(ref(getDatabase(app), `queue/` + cardId), response.data);
-    //   console.log('Saved to queue !');
-    // }
-  );
+  // refs.buttonsWrapper.setAttribute('firebase-id', cardId);
+  refs.buttonsWrapper.setAttribute('firebase-id', firebaseId);
 
   window.addEventListener('keydown', closeModalOnBackdropClick);
 }
 
-function closeModalOnBtn(e) {
-  refs.buttonCloseModal.removeEventListener('click', closeModalOnBtn);
-  refs.backdrop.removeEventListener('click', closeModalOnBtn);
-  removeStyles();
-  window.removeEventListener('keydown', closeModalOnBackdropClick);
-}
-function closeModalOnBackdropClick(e) {
-  const { target, currentTarget, code } = e;
-  if (target === currentTarget) {
-    removeStyles();
-  }
-  if (code === 'Escape') {
-    removeStyles();
-  }
-
-  window.removeEventListener('keydown', closeModalOnBackdropClick);
-}
-
-function removeStyles() {
-  refs.backdrop.classList.add('is-hidden');
-  document.body.classList.remove('no-scroll');
-  el.img.src = '#';
-}
-
-export { showInfo, closeModalOnBtn, closeModalOnBackdropClick };
+export {
+  showInfo,
+  closeModalOnBtn,
+  closeModalOnBackdropClick,
+  showInfoFromFirebase,
+};

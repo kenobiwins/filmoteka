@@ -45,4 +45,22 @@ async function fetchInfoMovieById(id) {
   return promise;
 }
 
-export { fetchTrendingMovies, fetchGenres, fetchMovies, fetchInfoMovieById };
+async function fetchTrailerById(movieId) {
+  const promise = await axios.get(
+    `${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}`
+  );
+
+  if (!promise.status) {
+    throw new Error('Something went wrongs');
+  }
+
+  return promise;
+}
+
+export {
+  fetchTrendingMovies,
+  fetchGenres,
+  fetchMovies,
+  fetchInfoMovieById,
+  fetchTrailerById,
+};

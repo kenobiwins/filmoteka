@@ -1,3 +1,4 @@
+import Notiflix from 'notiflix';
 import { fetchTrendingMovies, fetchMovies } from './API/API';
 import { refs } from './refs/refs';
 import { renderCards, insertMarkup } from './render/renderCards';
@@ -16,11 +17,12 @@ if (document.title === 'Filmoteka') {
 }
 
 async function onLoad() {
+  Notiflix.Loading.standard();
   const response = await fetchTrendingMovies(PAGE);
 
   pagination(response.data.page, response.data.total_pages);
   insertMarkup(refs.mainContainer, await renderCards(response.data));
-
+  Notiflix.Loading.remove();
   refs.pagination.addEventListener('click', paginationSelect);
   refs.mainContainer.addEventListener('click', showInfo);
 }
@@ -33,8 +35,13 @@ async function onSearch(e) {
     currentTarget,
   } = e;
 
+  if (searchQuery.value === '') {
+    Notiflix.Notify.info('Type something...');
+    return;
+  }
+  Notiflix.Loading.standard('looking for movies');
   const response = await fetchMovies(searchQuery.value, PAGE);
-
+  Notiflix.Loading.remove(500);
   if (
     response.data.results === 0 ||
     !response.data.results ||

@@ -10,9 +10,26 @@
 
   transition: background-color var(--transition), border-color var(--transition);
 
+  &:disabled {
+    background-color: map-get($colorPool, 'grey');
+    border-color: map-get($colorPool, 'grey');
+    color: map-get($colorPool, 'white');
+    cursor: auto;
+    &:hover,
+    &:focus {
+      background-color: map-get($colorPool, 'grey');
+      border-color: map-get($colorPool, 'grey');
+    }
+  }
+
   &:hover,
   &:focus {
     background-color: map-get($colorPool, 'orange');
     border-color: map-get($colorPool, 'orange');
   }
+}
+
+.button--active {
+  background-color: map-get($colorPool, 'orange');
+  border-color: map-get($colorPool, 'orange');
 }
