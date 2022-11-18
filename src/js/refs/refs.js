@@ -1,3 +1,5 @@
+import { doc } from 'firebase/firestore';
+
 const refs = {
   mainContainer: document.querySelector('.movie-gallery'),
   libraryContainer: document.querySelector('.library__movie-gallery'),
@@ -15,6 +17,13 @@ const refs = {
   buttonsWrapper: document.querySelector('.form__buttons-wrapper'),
   headerBtnGroup: document.querySelector('.header__button-group'),
   posterWrapper: document.querySelector('.modal__img-wrapper'),
+  signUpBtn: document.querySelector('.link[data-action="sign-up"]'),
+  backdropRegister: document.querySelector('.backdrop[data-value="sign-up"]'),
+  modalRegister: document.querySelector('.modal[data-value="sign-up"]'),
+  formRegister: document.querySelector('.signup'),
+  buttonCloseRegister: document.querySelector(
+    '.button-close[data-value="sign-up"]'
+  ),
 };
 
 export { refs };

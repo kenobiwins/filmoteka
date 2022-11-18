@@ -1,31 +1,9 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  // addDoc,
-} from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { db } from './firebase-init';
 import { refs } from '../refs/refs';
 import { closeModalOnBtn, showInfoFromFirebase } from '../render/renderModal';
 import { ALT_IMAGE_URL, insertMarkup } from '../render/renderCards';
 import Notiflix from 'notiflix';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyCebWfsV7NOjyL02i7fSXE4AU5yFpXdziw',
-  authDomain: 'filmoteka-6b0fa.firebaseapp.com',
-  projectId: 'filmoteka-6b0fa',
-  storageBucket: 'filmoteka-6b0fa.appspot.com',
-  messagingSenderId: '761691286246',
-  appId: '1:761691286246:web:7601ab645d132396eb6927',
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// init services
-const db = getFirestore(app);
 
 // collection ref
 const colRefWatched = collection(db, 'watched/');
@@ -33,67 +11,70 @@ const colRefQueue = collection(db, 'queue/');
 
 if (document.title === 'Filmoteka Library') {
   // get collection data watched
-  refs.getWatchedDataBtn.addEventListener('click', e => {
-    getDocs(colRefWatched)
-      .then(async snapshot => {
-        Notiflix.Loading.standard();
-        return getData(snapshot);
-      })
-      .then(async data => {
-        Notiflix.Loading.remove(500);
-        console.log('watched', data);
-        if (data.length === 0) {
-          showEmptyData('watched');
-        }
-        refs.getQueueDataBtn.classList.contains('button--active')
-          ? refs.getQueueDataBtn.classList.remove('button--active')
-          : null;
-        refs.getWatchedDataBtn.classList.add('button--active');
-        insertMarkup(refs.libraryContainer, await renderByFirebase(data));
-
-        refs.addWatchedBtn.classList.remove('visually-hidden');
-        refs.addWatchedBtn.textContent = 'Delete from watched';
-        refs.addQueueBtn.classList.add('visually-hidden');
-        refs.libraryContainer.addEventListener('click', showInfoFromFirebase);
-        refs.addWatchedBtn.addEventListener('click', deleteWatched);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  });
-
+  refs.getWatchedDataBtn.addEventListener('click', getWatchedCollection);
   // get collection data queue
-  refs.getQueueDataBtn.addEventListener('click', e => {
-    getDocs(colRefQueue)
-      .then(async snapshot => {
-        Notiflix.Loading.standard();
-        return getData(snapshot);
-      })
-      .then(async data => {
-        console.log('queue', data);
-        Notiflix.Loading.remove(500);
-        if (data.length === 0) {
-          showEmptyData('queue');
-        }
+  refs.getQueueDataBtn.addEventListener('click', getQueueCollection);
+}
 
-        refs.getWatchedDataBtn.classList.contains('button--active')
-          ? refs.getWatchedDataBtn.classList.remove('button--active')
-          : null;
-        refs.getQueueDataBtn.classList.add('button--active');
+function getWatchedCollection(e) {
+  getDocs(colRefWatched)
+    .then(async snapshot => {
+      Notiflix.Loading.standard();
+      return getData(snapshot);
+    })
+    .then(async data => {
+      Notiflix.Loading.remove(500);
+      console.log('watched', data);
+      if (data.length === 0) {
+        showEmptyData('watched');
+      }
+      refs.getQueueDataBtn.classList.contains('button--active')
+        ? refs.getQueueDataBtn.classList.remove('button--active')
+        : null;
+      refs.getWatchedDataBtn.classList.add('button--active');
+      insertMarkup(refs.libraryContainer, await renderByFirebase(data));
 
-        insertMarkup(refs.libraryContainer, await renderByFirebase(data));
+      refs.addWatchedBtn.classList.remove('visually-hidden');
+      refs.addWatchedBtn.textContent = 'Delete from watched';
+      refs.addQueueBtn.classList.add('visually-hidden');
+      refs.libraryContainer.addEventListener('click', showInfoFromFirebase);
+      refs.addWatchedBtn.addEventListener('click', deleteWatched);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
 
-        refs.addQueueBtn.classList.remove('visually-hidden');
-        refs.addQueueBtn.textContent = 'Delete from queue';
-        refs.addWatchedBtn.classList.add('visually-hidden');
-        refs.libraryContainer.addEventListener('click', showInfoFromFirebase);
+function getQueueCollection(e) {
+  getDocs(colRefQueue)
+    .then(async snapshot => {
+      Notiflix.Loading.standard();
+      return getData(snapshot);
+    })
+    .then(async data => {
+      console.log('queue', data);
+      Notiflix.Loading.remove(500);
+      if (data.length === 0) {
+        showEmptyData('queue');
+      }
 
-        refs.addQueueBtn.addEventListener('click', deleteQueue);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  });
+      refs.getWatchedDataBtn.classList.contains('button--active')
+        ? refs.getWatchedDataBtn.classList.remove('button--active')
+        : null;
+      refs.getQueueDataBtn.classList.add('button--active');
+
+      insertMarkup(refs.libraryContainer, await renderByFirebase(data));
+
+      refs.addQueueBtn.classList.remove('visually-hidden');
+      refs.addQueueBtn.textContent = 'Delete from queue';
+      refs.addWatchedBtn.classList.add('visually-hidden');
+      refs.libraryContainer.addEventListener('click', showInfoFromFirebase);
+
+      refs.addQueueBtn.addEventListener('click', deleteQueue);
+    })
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 function renderByFirebase(data) {
@@ -157,6 +138,7 @@ function deleteData(path_to_folder, e) {
   const docRef = doc(db, `${path_to_folder}`, filmId);
   deleteDoc(docRef);
 }
+
 function handleDeleteData(e, path_to_folder, coolectionRef) {
   deleteData(`${path_to_folder}`, e);
   // const { target } = e;
@@ -173,14 +155,17 @@ function handleDeleteData(e, path_to_folder, coolectionRef) {
       closeModalOnBtn();
     });
 }
+
 function deleteQueue(e) {
   return handleDeleteData(e, 'queue', colRefQueue);
 }
+
 function deleteWatched(e) {
   handleDeleteData(e, 'watched', colRefWatched);
 }
+
 function showEmptyData(name) {
   Notiflix.Notify.info(`Your ${name} tab is empty 😔`);
 }
 
-export { colRefQueue, colRefWatched, addToWatched, addToQueue, handleWatched };
+export { colRefQueue, colRefWatched };

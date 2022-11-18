@@ -42,6 +42,7 @@ async function renderCards(data) {
         }
         acc += `<li class="movie-card"  data-id='${id}'>
   <img src='${poster_path}' loading='lazy'/>
+<div class="movie-card__wrapper">
   <h3 class="movie-card__name">${title.toUpperCase() || name.toUpperCase()}</h3>
   <p class="movie-card__genres">
     ${
@@ -50,6 +51,7 @@ async function renderCards(data) {
           vote_average ? vote_average.toFixed(1) : "haven't ratio"
         }</span>
   </p>
+</div>
 </li>`;
         return acc;
       },
