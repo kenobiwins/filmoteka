@@ -32,8 +32,9 @@ const el = {
 
 let dataVar = {};
 let idForTrailer = '';
+
 async function showInfo(e) {
-  e.preventDefault();
+  // e.preventDefault();
 
   const { target, currentTarget } = e;
 
@@ -90,6 +91,8 @@ async function showInfo(e) {
     });
   });
 
+  setHref(idForTrailer);
+
   el.img.src = IMAGES_URL + poster_path || ALT_IMAGE_URL;
   el.originalTitle.textContent = title.toUpperCase() || name.toUpperCase();
   el.ratio.firstElementChild.textContent = vote_average
@@ -104,26 +107,31 @@ async function showInfo(e) {
 
   refs.buttonCloseModal.addEventListener('click', closeModalOnBtn);
   refs.backdrop.addEventListener('click', closeModalOnBackdropClick);
-  refs.posterWrapper.addEventListener('click', showTrailer);
 
   refs.backdrop.classList.remove('is-hidden');
   document.body.classList.add('no-scroll');
 
+  // refs.posterWrapper.addEventListener('click', handleIframe);
   refs.buttonsWrapper.addEventListener('click', handleSaveData);
 
   window.addEventListener('keydown', closeModalOnBackdropClick);
 }
-async function showTrailer(e) {
-  e.preventDefault();
-  const { target, currentTarget } = e;
-  console.log(target, currentTarget);
-  console.log(idForTrailer);
-  const response = await fetchTrailerById(idForTrailer);
 
-  response.data.results.forEach(el => {
-    el.hasOwnProperty(name);
-    console.log(el.hasOwnProperty(name));
-    console.log(el.name);
+// function handleIframe(e) {
+//   // e.preventDefault();
+//   const { target, currentTarget } = e;
+//   console.log(target);
+//   console.log(currentTarget);
+// }
+
+async function setHref(id) {
+  const response = await fetchTrailerById(id);
+
+  return response.data.results.forEach(el => {
+    if (el.hasOwnProperty(['name']) && el['name'] === 'Official Trailer') {
+      // refs.posterWrapper.href = el.key;
+      refs.posterWrapper.href = `https://www.youtube.com/watch?v=${el.key}`;
+    }
   });
 }
 
@@ -138,12 +146,14 @@ function handleSaveData(e) {
     refs.addQueueBtn.textContent.trim() === 'Add to queue'
   ) {
     saveData(colRefQueue, dataVar);
+    target.setAttribute('disabled', '');
     return;
   } else if (
     target === refs.addWatchedBtn &&
     refs.addWatchedBtn.textContent.trim() === 'Add to watched'
   ) {
     saveData(colRefWatched, dataVar);
+    target.setAttribute('disabled', '');
     return;
   }
 }
