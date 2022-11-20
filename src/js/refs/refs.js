@@ -21,9 +21,13 @@ const refs = {
   backdropRegister: document.querySelector('.backdrop[data-value="sign-up"]'),
   modalRegister: document.querySelector('.modal[data-value="sign-up"]'),
   formRegister: document.querySelector('.signup'),
+  formLogin: document.querySelector('.login[data-value="login"]'),
   buttonCloseRegister: document.querySelector(
     '.button-close[data-value="sign-up"]'
   ),
+  buttonLogin: document.querySelector('.modal__button[data-action="login"]'),
+  buttonLogout: document.querySelector('.modal__button[data-action="logout"]'),
+  headerNav: document.querySelector('.header__navigation'),
 };
 
 export { refs };

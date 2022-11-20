@@ -81,7 +81,7 @@ function pagination(page, pages) {
   }
   if (page > 4) {
     if (mqMoreThanMobile) {
-      markup += `<li class='pagination__item'>...</li>`;
+      markup += `<li>...</li>`;
     }
   }
   if (!mqMoreThanMobile && page >= 3) {
@@ -107,7 +107,7 @@ function pagination(page, pages) {
   }
   if (pages - 3 > PAGE) {
     if (mqMoreThanMobile) {
-      markup += `<li class='pagination__item'>...</li>`;
+      markup += `<li>...</li>`;
     }
   }
   if (pages > PAGE) {

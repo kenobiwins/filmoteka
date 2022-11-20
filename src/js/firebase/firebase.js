@@ -17,13 +17,13 @@ if (document.title === 'Filmoteka Library') {
 }
 
 function getWatchedCollection(e) {
+  Notiflix.Loading.standard();
   getDocs(colRefWatched)
     .then(async snapshot => {
-      Notiflix.Loading.standard();
       return getData(snapshot);
     })
     .then(async data => {
-      Notiflix.Loading.remove(500);
+      Notiflix.Loading.remove();
       console.log('watched', data);
       if (data.length === 0) {
         showEmptyData('watched');
@@ -46,14 +46,14 @@ function getWatchedCollection(e) {
 }
 
 function getQueueCollection(e) {
+  Notiflix.Loading.standard();
   getDocs(colRefQueue)
     .then(async snapshot => {
-      Notiflix.Loading.standard();
       return getData(snapshot);
     })
     .then(async data => {
       console.log('queue', data);
-      Notiflix.Loading.remove(500);
+      Notiflix.Loading.remove();
       if (data.length === 0) {
         showEmptyData('queue');
       }

@@ -1,5 +1,5 @@
 <div class="backdrop is-hidden" data-value="sign-up">
-  <div class="modal" data-value="sign-up">
+  <div class="modal register-form" data-value="sign-up">
     <button
       class="button-close"
       type="button"
@@ -10,13 +10,26 @@
         <use href="/src/images/svg/symbol-defs.svg#icon-close"></use>
       </svg>
     </button>
-
     <form class="signup">
+      <h2>Register right now</h2>
       <label for="email">email</label>
       <input type="email" name="email" />
       <label for="password">password</label>
       <input type="password" name="password" />
       <button class="button modal__button" type="submit">Sign up</button>
     </form>
+    <form class="login" data-value="login">
+      <h2>Have account?</h2>
+      <label for="email">email</label>
+      <input type="email" name="email" />
+      <label for="password">password</label>
+      <input type="password" name="password" />
+      <button class="button modal__button" type="submit" data-action="login">
+        Log in
+      </button>
+    </form>
+    <button class="button modal__button" type="button" data-action="logout">
+      Log out
+    </button>
   </div>
 </div>

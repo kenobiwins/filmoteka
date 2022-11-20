@@ -1,4 +1,5 @@
 import './js/API/API';
+import './js/helpers/notix-init';
 import './js/firebase/firebase-init';
 import './js/firebase/firebase-auth';
 import './js/firebase/firebase';
