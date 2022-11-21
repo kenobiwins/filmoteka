@@ -26,6 +26,9 @@ const refs = {
     '.button-close[data-value="sign-up"]'
   ),
   buttonLogin: document.querySelector('.modal__button[data-action="login"]'),
+  buttonLoginWithGoogle: document.querySelector(
+    '.modal__button[data-action="login-with-google"]'
+  ),
   buttonLogout: document.querySelector('.modal__button[data-action="logout"]'),
   headerNav: document.querySelector('.header__navigation'),
 };

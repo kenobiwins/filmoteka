@@ -4,19 +4,22 @@ import {
   signOut,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithRedirect,
 } from 'firebase/auth';
 import Notiflix from 'notiflix';
 import { refs } from '../refs/refs';
 
 const auth = getAuth();
+const providerGoogle = new GoogleAuthProvider();
 
 if (document.title === 'Filmoteka') {
+  checkUserLog();
   refs.signUpBtn.addEventListener('click', showSignUpModal);
   refs.formRegister.addEventListener('submit', registerUser);
   refs.buttonLogout.addEventListener('click', handleSignOut);
   refs.formLogin.addEventListener('submit', handleLogIn);
-
-  checkUserLog();
+  refs.buttonLoginWithGoogle.addEventListener('click', loginWithGoogle);
   return;
 } else {
   return;
@@ -91,6 +94,28 @@ function handleLogIn(e) {
   }
 }
 
+function loginWithGoogle(e) {
+  signInWithRedirect(auth, providerGoogle);
+
+  // signInWithPopup(auth, providerGoogle);
+  // .then(result => {
+  //   const credential = GoogleAuthProvider.credentialFromResult(result);
+  //   console.log(credential);
+  //   const user = result.user;
+  //   console.log(user);
+  // })
+  // .catch(error => {
+  //   // Handle Errors here.
+  //   const errorCode = error.code;
+  //   const errorMessage = error.message;
+  //   // The email of the user's account used.
+  //   const email = error.customData.email;
+  //   // The AuthCredential type that was used.
+  //   const credential = GoogleAuthProvider.credentialFromError(error);
+  //   Notiflix.Notify.failure(`${credential}`);
+  // });
+}
+
 function showSignUpModal(e) {
   e.preventDefault();
   refs.buttonCloseRegister.addEventListener('click', closeModalOnBtnRegister);
@@ -131,15 +156,18 @@ function closeModalOnBackdropClickRegister(e) {
 }
 
 function checkUserLog() {
+  Notiflix.Loading.pulse();
   return onAuthStateChanged(auth, user => {
     if (user) {
-      refs.signUpBtn.textContent = user.email;
+      refs.signUpBtn.textContent = user.displayName || user.email;
       refs.formLogin.style.display = 'none';
       refs.formRegister.style.display = 'none';
+      Notiflix.Loading.remove();
     } else {
       refs.headerNav.querySelector('[data-value="libraryRef"]').style.display =
         'none';
       refs.buttonLogout.style.display = 'none';
+      Notiflix.Loading.remove();
     }
   });
 }

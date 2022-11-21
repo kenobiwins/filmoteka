@@ -249,7 +249,7 @@ async function showInfoFromFirebase(e) {
   } else {
     el.img.src = IMAGES_URL + poster_path;
   }
-  el.img.alt = title || name;
+  el.img.alt = `poster for movie - ${title || name}`;
   el.originalTitle.textContent = title.toUpperCase() || name.toUpperCase();
   el.ratio.firstElementChild.textContent = vote_average
     ? vote_average.toFixed(1)
