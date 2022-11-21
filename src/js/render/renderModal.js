@@ -11,6 +11,8 @@ import {
 import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
 import { async } from '@firebase/util';
 import Notiflix from 'notiflix';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase/firebase-auth';
 
 const el = {
   img: refs.modalInfo.querySelector('.modal__img-wrapper img'),
@@ -56,6 +58,14 @@ async function showInfo(e) {
   [...refs.buttonsWrapper.children].forEach(el => {
     if (el.hasAttribute('disabled')) {
       el.removeAttribute('disabled');
+    }
+  });
+
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      [...refs.buttonsWrapper.children].forEach(el => {
+        el.setAttribute('disabled', '');
+      });
     }
   });
 

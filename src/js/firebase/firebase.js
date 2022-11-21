@@ -34,22 +34,24 @@ if (document.title === 'Filmoteka Library') {
 
 function getWatchedCollection(e) {
   Notiflix.Loading.standard();
-  console.log(colRefWatched);
+
+  refs.getQueueDataBtn.classList.contains('button--active')
+    ? refs.getQueueDataBtn.classList.remove('button--active')
+    : null;
+
+  refs.getWatchedDataBtn.classList.add('button--active');
+
   getDocs(colRefWatched)
     .then(async snapshot => {
-      console.log(snapshot);
       return getData(snapshot);
     })
     .then(async data => {
       Notiflix.Loading.remove();
-      console.log('watched', data);
+
       if (data.length === 0) {
         showEmptyData('watched');
       }
-      refs.getQueueDataBtn.classList.contains('button--active')
-        ? refs.getQueueDataBtn.classList.remove('button--active')
-        : null;
-      refs.getWatchedDataBtn.classList.add('button--active');
+
       insertMarkup(refs.libraryContainer, await renderByFirebase(data));
 
       refs.addWatchedBtn.classList.remove('visually-hidden');
@@ -65,21 +67,22 @@ function getWatchedCollection(e) {
 
 function getQueueCollection(e) {
   Notiflix.Loading.standard();
+
+  refs.getWatchedDataBtn.classList.contains('button--active')
+    ? refs.getWatchedDataBtn.classList.remove('button--active')
+    : null;
+
+  refs.getQueueDataBtn.classList.add('button--active');
+
   getDocs(colRefQueue)
     .then(async snapshot => {
       return getData(snapshot);
     })
     .then(async data => {
-      console.log('queue', data);
       Notiflix.Loading.remove();
       if (data.length === 0) {
         showEmptyData('queue');
       }
-
-      refs.getWatchedDataBtn.classList.contains('button--active')
-        ? refs.getWatchedDataBtn.classList.remove('button--active')
-        : null;
-      refs.getQueueDataBtn.classList.add('button--active');
 
       insertMarkup(refs.libraryContainer, await renderByFirebase(data));
 

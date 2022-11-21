@@ -8,10 +8,6 @@ import {
 import Notiflix from 'notiflix';
 import { refs } from '../refs/refs';
 
-// backdropRegister;
-// modalRegister;
-// formRegister;
-// buttonCloseRegister
 const auth = getAuth();
 
 if (document.title === 'Filmoteka') {
