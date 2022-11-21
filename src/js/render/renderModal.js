@@ -46,9 +46,12 @@ async function showInfo(e) {
 
   if (!cardId) return;
 
+  Notiflix.Loading.standard();
+
   const response = await fetchInfoMovieById(cardId);
 
   if (response === undefined || response === null) {
+    Notiflix.Loading.remove();
     return;
   }
 
@@ -69,7 +72,7 @@ async function showInfo(e) {
     }
   });
 
-  const {
+  let {
     title,
     name,
     vote_average,
@@ -103,7 +106,13 @@ async function showInfo(e) {
 
   setHref(idForTrailer);
 
-  el.img.src = IMAGES_URL + poster_path || ALT_IMAGE_URL;
+  if (!poster_path) {
+    poster_path = ALT_IMAGE_URL;
+  } else {
+    poster_path = IMAGES_URL + poster_path;
+  }
+
+  el.img.src = poster_path;
   el.originalTitle.textContent = title.toUpperCase() || name.toUpperCase();
   el.ratio.firstElementChild.textContent = vote_average
     ? vote_average.toFixed(1)
@@ -114,6 +123,8 @@ async function showInfo(e) {
   el.refTitle.textContent = title.toUpperCase() || name.toUpperCase();
   el.genres.textContent = genres.map(el => el['name']).join(', ');
   el.infoFilm.textContent = overview || "haven't overview";
+
+  Notiflix.Loading.remove();
 
   refs.buttonCloseModal.addEventListener('click', closeModalOnBtn);
   refs.backdrop.addEventListener('click', closeModalOnBackdropClick);
@@ -206,7 +217,7 @@ function removeStyles() {
 
 async function showInfoFromFirebase(e) {
   e.preventDefault();
-
+  Notiflix.Loading.pulse();
   const { target, currentTarget } = e;
 
   if (target === currentTarget) return;
@@ -238,7 +249,7 @@ async function showInfoFromFirebase(e) {
   } else {
     el.img.src = IMAGES_URL + poster_path;
   }
-
+  el.img.alt = title || name;
   el.originalTitle.textContent = title.toUpperCase() || name.toUpperCase();
   el.ratio.firstElementChild.textContent = vote_average
     ? vote_average.toFixed(1)
@@ -257,6 +268,8 @@ async function showInfoFromFirebase(e) {
   document.body.classList.add('no-scroll');
   // refs.buttonsWrapper.setAttribute('firebase-id', cardId);
   refs.buttonsWrapper.setAttribute('firebase-id', firebaseId);
+
+  Notiflix.Loading.remove();
 
   window.addEventListener('keydown', closeModalOnBackdropClick);
 }

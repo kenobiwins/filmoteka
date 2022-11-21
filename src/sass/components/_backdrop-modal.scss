@@ -58,14 +58,14 @@
 .modal__img-wrapper {
   margin: auto;
   @include mq(mobile) {
-    max-width: 240px;
+    width: 240px;
   }
 
   @include mq(tablet) {
-    max-width: 264px;
+    width: 264px;
   }
   @include mq(desktop) {
-    max-width: 375px;
+    width: 375px;
   }
 }
 .modal__title {

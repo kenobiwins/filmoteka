@@ -5,7 +5,7 @@ import { closeModalOnBtn, showInfoFromFirebase } from '../render/renderModal';
 import { ALT_IMAGE_URL, insertMarkup } from '../render/renderCards';
 import Notiflix from 'notiflix';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase-auth';
+import { auth, handleSignOut } from './firebase-auth';
 
 // collection ref
 let colRefWatched = collection(db, 'watched/');
@@ -17,6 +17,7 @@ onAuthStateChanged(auth, user => {
     USER_ID = user.uid;
     colRefWatched = collection(db, `${user.uid}/watched/movies/`);
     colRefQueue = collection(db, `${user.uid}/queue/movies/`);
+    return;
   } else {
     return;
   }

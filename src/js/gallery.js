@@ -122,6 +122,7 @@ function pagination(page, pages) {
 }
 
 async function paginationSelect(e) {
+  Notiflix.Loading.dots();
   const { target, currentTarget } = e;
   if (target === currentTarget || target === '...') {
     return;
@@ -131,6 +132,7 @@ async function paginationSelect(e) {
     const response = await fetchTrendingMovies(PAGE);
     insertMarkup(refs.mainContainer, await renderCards(response.data));
     pagination(response.data.page, response.data.total_pages);
+    Notiflix.Loading.remove();
     return;
   }
   if (target.dataset.action === 'prev') {
@@ -138,12 +140,14 @@ async function paginationSelect(e) {
     const response = await fetchTrendingMovies(PAGE);
     insertMarkup(refs.mainContainer, await renderCards(response.data));
     pagination(response.data.page, response.data.total_pages);
+    Notiflix.Loading.remove();
     return;
   }
   PAGE = Number(target.textContent);
   const response = await fetchTrendingMovies(PAGE);
   insertMarkup(refs.mainContainer, await renderCards(response.data));
   pagination(response.data.page, response.data.total_pages);
+  Notiflix.Loading.remove();
 }
 
 async function paginationOnSearch(e) {
