@@ -88,6 +88,9 @@ $linear-gradient: (
 
 .header__navigation {
   display: flex;
-  gap: 40px;
+  gap: 20px;
   @include fonts(12px, 14px);
+  @include mq(tablet) {
+    gap: 40px;
+  }
 }

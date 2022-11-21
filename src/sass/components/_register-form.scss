@@ -1,6 +1,8 @@
 .register-form {
   align-items: center;
   justify-content: space-evenly;
+  min-width: 40%;
+  height: auto;
 
   & form {
     display: flex;

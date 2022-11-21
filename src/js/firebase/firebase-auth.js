@@ -4,7 +4,6 @@ import {
   signOut,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  reload,
 } from 'firebase/auth';
 import Notiflix from 'notiflix';
 import { refs } from '../refs/refs';
@@ -26,6 +25,7 @@ if (document.title === 'Filmoteka') {
 } else {
   return;
 }
+
 function registerUser(e) {
   e.preventDefault();
   const {
@@ -136,8 +136,6 @@ function closeModalOnBackdropClickRegister(e) {
 
 function checkUserLog() {
   return onAuthStateChanged(auth, user => {
-    // console.log(user);
-
     if (user) {
       refs.signUpBtn.textContent = user.email;
       refs.formLogin.style.display = 'none';
@@ -149,3 +147,5 @@ function checkUserLog() {
     }
   });
 }
+
+export { auth };

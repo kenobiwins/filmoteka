@@ -4,22 +4,40 @@ import { refs } from '../refs/refs';
 import { closeModalOnBtn, showInfoFromFirebase } from '../render/renderModal';
 import { ALT_IMAGE_URL, insertMarkup } from '../render/renderCards';
 import Notiflix from 'notiflix';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase-auth';
 
 // collection ref
-const colRefWatched = collection(db, 'watched/');
-const colRefQueue = collection(db, 'queue/');
+let colRefWatched = collection(db, 'watched/');
+let colRefQueue = collection(db, 'queue/');
+let USER_ID = '';
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    USER_ID = user.uid;
+    colRefWatched = collection(db, `${user.uid}/watched/movies/`);
+    colRefQueue = collection(db, `${user.uid}/queue/movies/`);
+  } else {
+    return;
+  }
+});
 
 if (document.title === 'Filmoteka Library') {
   // get collection data watched
   refs.getWatchedDataBtn.addEventListener('click', getWatchedCollection);
   // get collection data queue
   refs.getQueueDataBtn.addEventListener('click', getQueueCollection);
+  return;
+} else {
+  return;
 }
 
 function getWatchedCollection(e) {
   Notiflix.Loading.standard();
+  console.log(colRefWatched);
   getDocs(colRefWatched)
     .then(async snapshot => {
+      console.log(snapshot);
       return getData(snapshot);
     })
     .then(async data => {
@@ -157,11 +175,11 @@ function handleDeleteData(e, path_to_folder, coolectionRef) {
 }
 
 function deleteQueue(e) {
-  return handleDeleteData(e, 'queue', colRefQueue);
+  return handleDeleteData(e, `${USER_ID}/queue/movies`, colRefQueue);
 }
 
 function deleteWatched(e) {
-  handleDeleteData(e, 'watched', colRefWatched);
+  handleDeleteData(e, `${USER_ID}/watched/movies`, colRefWatched);
 }
 
 function showEmptyData(name) {
