@@ -34,7 +34,8 @@ const el = {
 
 let dataVar = {};
 let idForTrailer = '';
-
+// let prevHTML = '';
+// console.log(prevHTML);
 async function showInfo(e) {
   // e.preventDefault();
 
@@ -132,6 +133,7 @@ async function showInfo(e) {
   refs.backdrop.classList.remove('is-hidden');
   document.body.classList.add('no-scroll');
 
+  refs.posterWrapper.addEventListener('click', showTrailer);
   // refs.posterWrapper.addEventListener('click', handleIframe);
   refs.buttonsWrapper.addEventListener('click', handleSaveData);
 
@@ -149,9 +151,19 @@ async function setHref(id) {
   const response = await fetchTrailerById(id);
 
   return response.data.results.forEach(el => {
-    if (el.hasOwnProperty(['name']) && el['name'] === 'Official Trailer') {
+    if (
+      (el.hasOwnProperty(['name']) && el['name'] === 'Official Trailer') ||
+      'Official Trailer 2'
+    ) {
       // refs.posterWrapper.href = el.key;
-      refs.posterWrapper.href = `https://www.youtube.com/watch?v=${el.key}`;
+      // console.log(el);
+      refs.posterWrapper.href = `https://www.youtube.com/embed/${el.key}`;
+      return;
+    } else {
+      refs.posterWrapper.href = `#`;
+      // refs.posterWrapper.removeEventListener('click', showTrailer);
+      // Notiflix.Notify.info(`Haven't trailer`);
+      return;
     }
   });
 }
@@ -191,7 +203,16 @@ function closeModalOnBtn(e) {
   refs.buttonCloseModal.removeEventListener('click', closeModalOnBtn);
   refs.backdrop.removeEventListener('click', closeModalOnBtn);
   removeStyles();
+  if (
+    refs.posterWrapper.lastElementChild.classList.contains('visually-hidden')
+  ) {
+    refs.posterWrapper.children[1].classList.remove('visually-hidden');
+    refs.posterWrapper.children[0].remove();
+  }
+  console.log(refs.posterWrapper);
+  // refs.posterWrapper.innerHTML = prevHTML;
 
+  refs.posterWrapper.removeEventListener('click', showTrailer);
   refs.buttonsWrapper.removeEventListener('click', handleSaveData);
   window.removeEventListener('keydown', closeModalOnBackdropClick);
 }
@@ -200,9 +221,21 @@ function closeModalOnBackdropClick(e) {
   const { target, currentTarget, code } = e;
   if (target === currentTarget) {
     removeStyles();
+    if (
+      refs.posterWrapper.lastElementChild.classList.contains('visually-hidden')
+    ) {
+      refs.posterWrapper.children[1].classList.remove('visually-hidden');
+      refs.posterWrapper.children[0].remove();
+    }
   }
   if (code === 'Escape') {
     removeStyles();
+    if (
+      refs.posterWrapper.lastElementChild.classList.contains('visually-hidden')
+    ) {
+      refs.posterWrapper.children[1].classList.remove('visually-hidden');
+      refs.posterWrapper.children[0].remove();
+    }
   }
 
   window.removeEventListener('keydown', closeModalOnBackdropClick);
@@ -231,6 +264,8 @@ async function showInfoFromFirebase(e) {
   if (response === undefined || response === null) {
     return;
   }
+  idForTrailer = cardId;
+  setHref(idForTrailer);
 
   const {
     title,
@@ -268,10 +303,23 @@ async function showInfoFromFirebase(e) {
   document.body.classList.add('no-scroll');
   // refs.buttonsWrapper.setAttribute('firebase-id', cardId);
   refs.buttonsWrapper.setAttribute('firebase-id', firebaseId);
+  refs.posterWrapper.addEventListener('click', showTrailer);
 
   Notiflix.Loading.remove();
 
   window.addEventListener('keydown', closeModalOnBackdropClick);
+}
+
+function showTrailer(e) {
+  e.preventDefault();
+  const { target, currentTarget } = e;
+  // console.log(target);
+  // console.log(currentTarget);
+  target.classList.add('visually-hidden');
+  currentTarget.insertAdjacentHTML(
+    'afterbegin',
+    `<iframe width="280px" height="350px" src="${currentTarget.href}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+  );
 }
 
 export {
