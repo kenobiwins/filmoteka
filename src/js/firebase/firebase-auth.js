@@ -14,12 +14,14 @@ const auth = getAuth();
 const providerGoogle = new GoogleAuthProvider();
 
 if (document.title === 'Filmoteka') {
+  // Notiflix.Loading.pulse();
   checkUserLog();
   refs.signUpBtn.addEventListener('click', showSignUpModal);
   refs.formRegister.addEventListener('submit', registerUser);
   refs.buttonLogout.addEventListener('click', handleSignOut);
   refs.formLogin.addEventListener('submit', handleLogIn);
   refs.buttonLoginWithGoogle.addEventListener('click', loginWithGoogle);
+  // Notiflix.Loading.remove();
   return;
 } else {
   return;
@@ -156,19 +158,20 @@ function closeModalOnBackdropClickRegister(e) {
 }
 
 function checkUserLog() {
-  Notiflix.Loading.pulse();
+  // Notiflix.Loading.pulse();
   return onAuthStateChanged(auth, user => {
     if (user) {
       refs.signUpBtn.textContent = user.displayName || user.email;
       refs.formLogin.style.display = 'none';
       refs.formRegister.style.display = 'none';
-      Notiflix.Loading.remove();
+      refs.headerNav
+        .querySelector('[data-value="libraryRef"]')
+        .parentElement.classList.remove('visually-hidden');
+      // Notiflix.Loading.remove();
     } else {
-      refs.headerNav.querySelector('[data-value="libraryRef"]').style.display =
-        'none';
       refs.buttonLogout.style.display = 'none';
-      Notiflix.Loading.remove();
     }
+    // Notiflix.Loading.remove();
   });
 }
 

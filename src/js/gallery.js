@@ -19,10 +19,10 @@ if (document.title === 'Filmoteka') {
 async function onLoad() {
   Notiflix.Loading.standard();
   const response = await fetchTrendingMovies(PAGE);
+  Notiflix.Loading.remove(700);
 
   pagination(response.data.page, response.data.total_pages);
   insertMarkup(refs.mainContainer, await renderCards(response.data));
-  Notiflix.Loading.remove();
   refs.pagination.addEventListener('click', paginationSelect);
   refs.mainContainer.addEventListener('click', showInfo);
 }

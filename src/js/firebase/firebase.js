@@ -24,10 +24,12 @@ onAuthStateChanged(auth, user => {
 });
 
 if (document.title === 'Filmoteka Library') {
+  Notiflix.Loading.standard();
   // get collection data watched
   refs.getWatchedDataBtn.addEventListener('click', getWatchedCollection);
   // get collection data queue
   refs.getQueueDataBtn.addEventListener('click', getQueueCollection);
+  Notiflix.Loading.remove();
   return;
 } else {
   return;
