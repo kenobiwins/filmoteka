@@ -211,7 +211,7 @@ function closeModalOnBtn(e) {
   }
   console.log(refs.posterWrapper);
   // refs.posterWrapper.innerHTML = prevHTML;
-
+  Notiflix.Loading.remove();
   refs.posterWrapper.removeEventListener('click', showTrailer);
   refs.buttonsWrapper.removeEventListener('click', handleSaveData);
   window.removeEventListener('keydown', closeModalOnBackdropClick);
@@ -262,6 +262,8 @@ async function showInfoFromFirebase(e) {
 
   const response = await fetchInfoMovieById(cardId);
   if (response === undefined || response === null) {
+    Notiflix.Loading.remove();
+
     return;
   }
   idForTrailer = cardId;
